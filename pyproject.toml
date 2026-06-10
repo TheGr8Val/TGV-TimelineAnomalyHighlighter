@@ -21,7 +21,11 @@ dependencies = [
     "pandas>=1.5",
     "scikit-learn>=1.2",
     "numpy>=1.21",
+    "click>=8.0",
 ]
+
+[project.scripts]
+timeline-anomaly = "timeline_anomaly.cli:cli"
 
 [project.optional-dependencies]
 dev = [

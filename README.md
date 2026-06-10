@@ -147,6 +147,7 @@ The sample timelines include a deliberate insider-threat scenario for demonstrat
 
 ## Roadmap
 
-- [ ] CLI (`timeline-anomaly score timeline.csv`)
-- [ ] Self-contained HTML report with annotated interactive timeline
+- [x] ML core (IsolationForest + LOF ensemble, 10 DFIR features)
+- [x] CLI (`timeline-anomaly input.csv`)
+- [x] Self-contained HTML report (TGV branded, no CDN)
 - [ ] Medium article walkthrough

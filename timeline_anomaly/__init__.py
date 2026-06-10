@@ -24,6 +24,7 @@ from .ingest import (
 from .features import FEATURE_COLS, extract_features
 from .detector import AnomalyDetector, DetectorConfig
 from .explain import generate_notes
+from .report import generate_html_report
 
 __version__ = "0.1.0"
 __all__ = [
@@ -36,6 +37,7 @@ __all__ = [
     "load_plaso_csv",
     "extract_features",
     "generate_notes",
+    "generate_html_report",
     "FEATURE_COLS",
 ]
 
