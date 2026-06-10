@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Timeline Anomaly Report — sample_generic.csv</title>
+<style>
+:root{--bg:#0A0A12;--bg2:#11111C;--bg3:#1A1A28;--bg4:#1E1E30;--purple:#A855F7;--purple-mid:#7C3AED;--pink:#EC4899;--indigo:#818CF8;--text:#F1F0FF;--muted:#9B8FCE;--dim:#5A5280;--border:rgba(168,85,247,0.22);--red:#EF4444;--orange:#F97316;--amber:#F59E0B}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;font-size:13px;line-height:1.6;padding-bottom:48px}
+code,.mono{font-family:'Cascadia Code','Consolas','Courier New',monospace;font-size:12px}
+.container{max-width:1280px;margin:0 auto;padding:0 24px}
+.page-header{background:linear-gradient(135deg,rgba(168,85,247,0.10) 0%,rgba(236,72,153,0.06) 100%);border-bottom:1px solid var(--border);padding:28px 32px 22px;margin-bottom:4px}
+.header-brand{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:6px}
+.header-title{font-size:22px;font-weight:800;color:var(--text);margin-bottom:4px}
+.header-meta{font-size:12px;color:var(--muted)}
+.section{margin-top:28px}
+.section-title{font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.section-sub{font-size:12px;color:var(--dim);margin-bottom:8px}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px 18px}
+.stat-card.hi{border-color:rgba(236,72,153,0.35)}
+.stat-label{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.stat-value{font-size:28px;font-weight:800;color:var(--text);line-height:1}
+.stat-card.hi .stat-value{color:var(--pink)}
+.stat-sub{font-size:11px;color:var(--dim);margin-top:3px}
+.stat-value.small{font-size:14px;padding-top:4px}
+.score-strip{display:flex;align-items:flex-end;height:64px;gap:1px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;overflow:hidden}
+.strip-bar{flex:1 1 0;min-width:2px;border-radius:2px 2px 0 0;opacity:.82;cursor:default;transition:opacity .12s}
+.strip-bar:hover{opacity:1}
+.anomaly-card{background:var(--bg2);border:1px solid rgba(239,68,68,0.18);border-left:3px solid;border-radius:8px;padding:13px 16px;margin-bottom:10px}
+.anomaly-card.tier-critical{border-left-color:var(--red)}
+.anomaly-card.tier-high{border-left-color:var(--orange)}
+.anomaly-card.tier-flagged{border-left-color:var(--amber)}
+.anomaly-header{display:flex;align-items:center;gap:12px;margin-bottom:5px;flex-wrap:wrap}
+.score-badge{font-size:12px;font-weight:800;font-family:'Cascadia Code',monospace;padding:2px 8px;border-radius:4px;background:rgba(239,68,68,0.14);color:var(--red);flex-shrink:0}
+.score-badge.tier-high{background:rgba(249,115,22,0.14);color:var(--orange)}
+.score-badge.tier-flagged{background:rgba(245,158,11,0.14);color:var(--amber)}
+.anomaly-ts{font-size:12px;color:var(--dim);font-family:monospace}
+.anomaly-etype{font-weight:700;color:var(--text);font-size:13px}
+.anomaly-notes{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
+.anomaly-desc{font-size:12px;color:var(--dim);margin-top:2px}
+.controls{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.btn{background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);cursor:pointer;font-size:12px;font-weight:600;padding:6px 14px;transition:border-color .14s,background .14s}
+.btn:hover{background:var(--bg4);border-color:var(--purple)}
+.btn.active{background:rgba(168,85,247,0.14);border-color:var(--purple);color:var(--purple)}
+.result-count{font-size:12px;color:var(--dim);margin-left:auto}
+.timeline-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:640px}
+thead th{background:var(--bg3);color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid rgba(168,85,247,0.07)}
+tbody tr:hover td{background:rgba(168,85,247,0.04)!important}
+tbody td{padding:9px 14px;vertical-align:middle;font-size:12px}
+.row-normal td:first-child{border-left:2px solid transparent}
+.row-flagged td:first-child{border-left:2px solid var(--amber)}
+.row-high td:first-child{border-left:2px solid var(--orange)}
+.row-critical td:first-child{border-left:2px solid var(--red)}
+.row-flagged{background:rgba(245,158,11,0.03)}
+.row-high{background:rgba(249,115,22,0.05)}
+.row-critical{background:rgba(239,68,68,0.07)}
+.ts-cell{color:var(--dim);font-family:monospace;white-space:nowrap}
+.etype-badge{display:inline-block;background:rgba(168,85,247,0.10);border:1px solid rgba(168,85,247,0.18);border-radius:4px;color:var(--indigo);font-size:11px;font-weight:600;padding:1px 7px;white-space:nowrap}
+.score-cell{min-width:120px;white-space:nowrap}
+.score-bar-wrap{display:flex;align-items:center;gap:8px}
+.score-track{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;min-width:56px}
+.score-fill{height:100%;border-radius:3px}
+.score-num{font-family:monospace;font-size:12px;font-weight:700;width:40px;text-align:right;flex-shrink:0}
+.notes-cell{color:var(--muted);font-size:11px;max-width:340px;line-height:1.5}
+.notes-empty{color:var(--dim);font-size:11px}
+.desc-cell{color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.page-footer{margin-top:40px;padding:18px 32px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.footer-brand{font-size:12px;font-weight:800;background:linear-gradient(90deg,var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.footer-meta{font-size:11px;color:var(--dim)}
+@media print{body{background:#fff;color:#000}.btn,.controls{display:none!important}.page-header{background:#fff;border-bottom:1px solid #ccc}}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="container">
+    <div class="header-brand">thegr8val · DFIR ML Tool</div>
+    <h1 class="header-title">Timeline Anomaly Report — sample_generic.csv</h1>
+    <p class="header-meta">Generated 2026-06-10 12:00 UTC · Timeline Anomaly Highlighter v0.1.0 · IsolationForest + LOF ensemble · threshold 0.65</p>
+  </div>
+</header>
+
+<div class="container">
+
+<div class="section">
+  <div class="summary-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Events</div>
+      <div class="stat-value">72</div>
+    </div>
+    <div class="stat-card hi">
+      <div class="stat-label">Flagged</div>
+      <div class="stat-value">15</div>
+      <div class="stat-sub">20.8% of timeline</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Max Score</div>
+      <div class="stat-value">0.970</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Time Range</div>
+      <div class="stat-value small mono">2024-03-11 → 2024-03-15</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Score Distribution</div>
+  <div class="section-sub">Each bar = one event · Height = anomaly score · Hover for details</div>
+  <div class="score-strip">
+<div class="strip-bar" style="height:6px;background:#7C3AED" title="2024-03-11 08:47 | LOGON | 0.120"></div>
+<div class="strip-bar" style="height:4px;background:#7C3AED" title="2024-03-11 08:48 | FILE_ACCESS | 0.080"></div>
+<div class="strip-bar" style="height:4px;background:#7C3AED" title="2024-03-11 08:52 | FILE_ACCESS | 0.090"></div>
+<div class="strip-bar" style="height:7px;background:#7C3AED" title="2024-03-11 09:05 | PROCESS_EXEC | 0.150"></div>
+<div class="strip-bar" style="height:5px;background:#7C3AED" title="2024-03-11 09:18 | FILE_ACCESS | 0.100"></div>
+<div class="strip-bar" style="height:7px;background:#7C3AED" title="2024-03-11 09:31 | FILE_WRITE | 0.140"></div>
+<div class="strip-bar" style="height:4px;background:#7C3AED" title="2024-03-11 10:02 | FILE_ACCESS | 0.090"></div>
+<div class="strip-bar" style="height:8px;background:#7C3AED" title="2024-03-11 10:24 | PROCESS_EXEC | 0.160"></div>
+<div class="strip-bar" style="height:6px;background:#7C3AED" title="2024-03-11 10:45 | FILE_WRITE | 0.130"></div>
+<div class="strip-bar" style="height:5px;background:#7C3AED" title="2024-03-11 11:03 | FILE_ACCESS | 0.110"></div>
+<div class="strip-bar" style="height:5px;background:#7C3AED" title="2024-03-11 11:09 | FILE_ACCESS | 0.110"></div>
+<div class="strip-bar" style="height:5px;background:#7C3AED" title="2024-03-11 11:22 | FILE_ACCESS | 0.100"></div>
+<div class="strip-bar" style="height:8px;background:#7C3AED" title="2024-03-11 12:00 | LOGOFF | 0.180"></div>
+<div class="strip-bar" style="height:7px;background:#7C3AED" title="2024-03-11 13:01 | LOGON | 0.140"></div>
+<div class="strip-bar" style="height:4px;background:#7C3AED" title="2024-03-11 13:15 | FILE_ACCESS | 0.090"></div>
+<div class="strip-bar" style="height:6px;background:#7C3AED" title="2024-03-11 13:28 | FILE_WRITE | 0.130"></div>
+<div class="strip-bar" style="height:8px;background:#7C3AED" title="2024-03-11 14:05 | PROCESS_EXEC | 0.170"></div>
+<div class="strip-bar" style="height:5px;background:#7C3AED" title="2024-03-11 14:22 | FILE_ACCESS | 0.100"></div>
+<div class="strip-bar" style="height:6px;background:#7C3AED" title="2024-03-11 15:01 | FILE_WRITE | 0.130"></div>
+<div class="strip-bar" style="height:5px;background:#7C3AED" title="2024-03-11 15:45 | FILE_ACCESS | 0.110"></div>
+<div class="strip-bar" style="height:9px;background:#7C3AED" title="2024-03-11 16:30 | LOGOFF | 0.200"></div>
+<div class="strip-bar" style="height:6px;background:#7C3AED" title="2024-03-12 08:51 | LOGON | 0.130"></div>
+<div class="strip-bar" style="height:4px;background:#7C3AED" title="2024-03-12 09:00 | FILE_ACCESS | 0.090"></div>
+<div class="strip-bar" style="height:7px;background:#7C3AED" title="2024-03-12 09:34 | PROCESS_EXEC | 0.150"></div>
+<div class="strip-bar" style="height:5px;background:#7C3AED" title="2024-03-12 10:02 | FILE_ACCESS | 0.100"></div>
+<div class="strip-bar" style="height:6px;background:#7C3AED" title="2024-03-12 10:28 | FILE_WRITE | 0.130"></div>
+<div class="strip-bar" style="height:5px;background:#7C3AED" title="2024-03-12 11:15 | FILE_ACCESS | 0.110"></div>
+<div class="strip-bar" style="height:7px;background:#7C3AED" title="2024-03-12 11:47 | FILE_WRITE | 0.140"></div>
+<div class="strip-bar" style="height:8px;background:#7C3AED" title="2024-03-12 12:30 | LOGOFF | 0.170"></div>
+<div class="strip-bar" style="height:6px;background:#7C3AED" title="2024-03-12 13:15 | LOGON | 0.130"></div>
+<div class="strip-bar" style="height:5px;background:#7C3AED" title="2024-03-12 13:40 | FILE_ACCESS | 0.100"></div>
+<div class="strip-bar" style="height:5px;background:#7C3AED" title="2024-03-12 14:05 | FILE_ACCESS | 0.110"></div>
+<div class="strip-bar" style="height:6px;background:#7C3AED" title="2024-03-12 15:00 | FILE_WRITE | 0.130"></div>
+<div class="strip-bar" style="height:8px;background:#7C3AED" title="2024-03-12 16:00 | LOGOFF | 0.180"></div>
+<div class="strip-bar" style="height:6px;background:#7C3AED" title="2024-03-13 09:02 | LOGON | 0.130"></div>
+<div class="strip-bar" style="height:4px;background:#7C3AED" title="2024-03-13 09:18 | FILE_ACCESS | 0.090"></div>
+<div class="strip-bar" style="height:8px;background:#7C3AED" title="2024-03-13 10:11 | PROCESS_EXEC | 0.160"></div>
+<div class="strip-bar" style="height:6px;background:#7C3AED" title="2024-03-13 10:45 | FILE_WRITE | 0.130"></div>
+<div class="strip-bar" style="height:5px;background:#7C3AED" title="2024-03-13 11:30 | FILE_ACCESS | 0.110"></div>
+<div class="strip-bar" style="height:8px;background:#7C3AED" title="2024-03-13 12:00 | LOGOFF | 0.170"></div>
+<div class="strip-bar" style="height:7px;background:#7C3AED" title="2024-03-13 13:05 | LOGON | 0.140"></div>
+<div class="strip-bar" style="height:4px;background:#7C3AED" title="2024-03-13 13:22 | FILE_ACCESS | 0.090"></div>
+<div class="strip-bar" style="height:6px;background:#7C3AED" title="2024-03-13 14:01 | FILE_WRITE | 0.130"></div>
+<div class="strip-bar" style="height:5px;background:#7C3AED" title="2024-03-13 15:10 | FILE_ACCESS | 0.110"></div>
+<div class="strip-bar" style="height:8px;background:#7C3AED" title="2024-03-13 16:30 | LOGOFF | 0.180"></div>
+<div class="strip-bar" style="height:37px;background:#EF4444" title="2024-03-14 03:11 | LOGON | 0.840"></div>
+<div class="strip-bar" style="height:40px;background:#EF4444" title="2024-03-14 03:11 | FILE_ACCESS | 0.910"></div>
+<div class="strip-bar" style="height:41px;background:#EF4444" title="2024-03-14 03:11 | FILE_ACCESS | 0.940"></div>
+<div class="strip-bar" style="height:41px;background:#EF4444" title="2024-03-14 03:12 | FILE_ACCESS | 0.930"></div>
+<div class="strip-bar" style="height:40px;background:#EF4444" title="2024-03-14 03:12 | FILE_ACCESS | 0.910"></div>
+<div class="strip-bar" style="height:39px;background:#EF4444" title="2024-03-14 03:12 | FILE_ACCESS | 0.880"></div>
+<div class="strip-bar" style="height:38px;background:#EF4444" title="2024-03-14 03:12 | FILE_ACCESS | 0.870"></div>
+<div class="strip-bar" style="height:42px;background:#EF4444" title="2024-03-14 03:12 | FILE_WRITE | 0.950"></div>
+<div class="strip-bar" style="height:43px;background:#EF4444" title="2024-03-14 03:13 | USB_WRITE | 0.970"></div>
+<div class="strip-bar" style="height:36px;background:#EF4444" title="2024-03-14 03:14 | LOGOFF | 0.820"></div>
+<div class="strip-bar" style="height:7px;background:#7C3AED" title="2024-03-14 09:05 | LOGON | 0.150"></div>
+<div class="strip-bar" style="height:5px;background:#7C3AED" title="2024-03-14 09:22 | FILE_ACCESS | 0.100"></div>
+<div class="strip-bar" style="height:8px;background:#7C3AED" title="2024-03-14 10:00 | PROCESS_EXEC | 0.160"></div>
+<div class="strip-bar" style="height:5px;background:#7C3AED" title="2024-03-14 10:45 | FILE_ACCESS | 0.100"></div>
+<div class="strip-bar" style="height:6px;background:#7C3AED" title="2024-03-14 11:30 | FILE_WRITE | 0.130"></div>
+<div class="strip-bar" style="height:9px;background:#7C3AED" title="2024-03-14 12:00 | LOGOFF | 0.190"></div>
+<div class="strip-bar" style="height:33px;background:#F97316" title="2024-03-14 22:47 | LOGON | 0.750"></div>
+<div class="strip-bar" style="height:39px;background:#EF4444" title="2024-03-14 22:47 | REGISTRY_WRITE | 0.890"></div>
+<div class="strip-bar" style="height:36px;background:#EF4444" title="2024-03-14 22:48 | PROCESS_EXEC | 0.820"></div>
+<div class="strip-bar" style="height:40px;background:#EF4444" title="2024-03-14 22:48 | NETWORK_CONN | 0.910"></div>
+<div class="strip-bar" style="height:32px;background:#F97316" title="2024-03-14 22:50 | LOGOFF | 0.730"></div>
+<div class="strip-bar" style="height:7px;background:#7C3AED" title="2024-03-15 09:03 | LOGON | 0.150"></div>
+<div class="strip-bar" style="height:4px;background:#7C3AED" title="2024-03-15 09:15 | FILE_ACCESS | 0.090"></div>
+<div class="strip-bar" style="height:8px;background:#7C3AED" title="2024-03-15 10:02 | PROCESS_EXEC | 0.160"></div>
+<div class="strip-bar" style="height:5px;background:#7C3AED" title="2024-03-15 10:30 | FILE_ACCESS | 0.110"></div>
+<div class="strip-bar" style="height:7px;background:#7C3AED" title="2024-03-15 11:15 | FILE_WRITE | 0.140"></div>
+<div class="strip-bar" style="height:9px;background:#7C3AED" title="2024-03-15 12:00 | LOGOFF | 0.200"></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Top Flagged Events</div>
+<div class="anomaly-card tier-critical">
+  <div class="anomaly-header">
+    <span class="score-badge tier-critical">0.970</span>
+    <span class="anomaly-ts">2024-03-14 03:13:10</span>
+    <span class="anomaly-etype">USB_WRITE</span>
+  </div>
+  <div class="anomaly-desc">Copied to USB device — E:\fin_data.zip</div>
+  <div class="anomaly-notes">Unusual hour (3:00; typical 9–16h); Rare event type (1.4% of timeline); Burst: 8 events in 60s window (90th-pct: 2)</div>
+</div>
+<div class="anomaly-card tier-critical">
+  <div class="anomaly-header">
+    <span class="score-badge tier-critical">0.950</span>
+    <span class="anomaly-ts">2024-03-14 03:12:55</span>
+    <span class="anomaly-etype">FILE_WRITE</span>
+  </div>
+  <div class="anomaly-desc">Created archive — C:\Users\jsmith\AppData\Local\Temp\fin_data.zip</div>
+  <div class="anomaly-notes">Unusual hour (3:00; typical 9–16h); Burst: 8 events in 60s window (90th-pct: 2); Rare event type (9.7% of timeline)</div>
+</div>
+<div class="anomaly-card tier-critical">
+  <div class="anomaly-header">
+    <span class="score-badge tier-critical">0.940</span>
+    <span class="anomaly-ts">2024-03-14 03:11:52</span>
+    <span class="anomaly-etype">FILE_ACCESS</span>
+  </div>
+  <div class="anomaly-desc">Read payroll file — \\FILESERVER01\Finance\payroll_2024.xlsx</div>
+  <div class="anomaly-notes">Unusual hour (3:00; typical 9–16h); Burst: 6 events in 60s window (90th-pct: 2)</div>
+</div>
+<div class="anomaly-card tier-critical">
+  <div class="anomaly-header">
+    <span class="score-badge tier-critical">0.930</span>
+    <span class="anomaly-ts">2024-03-14 03:12:04</span>
+    <span class="anomaly-etype">FILE_ACCESS</span>
+  </div>
+  <div class="anomaly-desc">Read Q1 actuals — \\FILESERVER01\Finance\Q1_actuals.xlsx</div>
+  <div class="anomaly-notes">Unusual hour (3:00; typical 9–16h); Burst: 7 events in 60s window (90th-pct: 2)</div>
+</div>
+<div class="anomaly-card tier-critical">
+  <div class="anomaly-header">
+    <span class="score-badge tier-critical">0.910</span>
+    <span class="anomaly-ts">2024-03-14 22:48:29</span>
+    <span class="anomaly-etype">NETWORK_CONN</span>
+  </div>
+  <div class="anomaly-desc">Outbound connection established — 185.220.101.47:443</div>
+  <div class="anomaly-notes">Rare event type (1.4% of timeline); Unusual hour (22:00; typical 9–16h); Atypical hour for this event type (+3.2σ)</div>
+</div>
+</div>
+
+<div class="section">
+  <div class="section-title">Full Timeline</div>
+  <div class="controls">
+    <button class="btn" id="filter-btn" onclick="toggleFilter()">Flagged Only</button>
+    <span class="result-count" id="row-count">Showing 72 of 72 events</span>
+  </div>
+  <div class="timeline-wrap">
+    <table>
+      <thead><tr><th>Timestamp</th><th>Event Type</th><th>Description</th><th>User</th><th>Host</th><th>Score</th><th>Anomaly Notes</th></tr></thead>
+      <tbody>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 08:47:12</td><td><span class="etype-badge">LOGON</span></td><td class="desc-cell">Interactive logon</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:12%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.120</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 08:48:05</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Opened email attachment</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:8%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.080</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 08:52:33</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read document</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:9%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.090</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 09:05:44</td><td><span class="etype-badge">PROCESS_EXEC</span></td><td class="desc-cell">Launched browser</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:15%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.150</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 09:18:21</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read spreadsheet</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:10%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.100</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 09:31:07</td><td><span class="etype-badge">FILE_WRITE</span></td><td class="desc-cell">Saved document</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:14%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.140</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 10:02:55</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read document</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:9%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.090</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 10:24:40</td><td><span class="etype-badge">PROCESS_EXEC</span></td><td class="desc-cell">Launched Word</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:16%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.160</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 10:45:12</td><td><span class="etype-badge">FILE_WRITE</span></td><td class="desc-cell">Saved report</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:13%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.130</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 11:03:28</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Opened shared folder</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:11%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.110</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 11:09:44</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read finance file</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:11%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.110</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 11:22:01</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read payroll file</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:10%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.100</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 12:00:15</td><td><span class="etype-badge">LOGOFF</span></td><td class="desc-cell">User logoff</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:18%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.180</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 13:01:08</td><td><span class="etype-badge">LOGON</span></td><td class="desc-cell">Interactive logon</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:14%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.140</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 13:15:32</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read email</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:9%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.090</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 13:28:47</td><td><span class="etype-badge">FILE_WRITE</span></td><td class="desc-cell">Edited document</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:13%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.130</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 14:05:19</td><td><span class="etype-badge">PROCESS_EXEC</span></td><td class="desc-cell">Launched Excel</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:17%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.170</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 14:22:55</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Opened spreadsheet</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:10%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.100</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 15:01:33</td><td><span class="etype-badge">FILE_WRITE</span></td><td class="desc-cell">Saved spreadsheet</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:13%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.130</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 15:45:08</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read shared file</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:11%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.110</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-11 16:30:00</td><td><span class="etype-badge">LOGOFF</span></td><td class="desc-cell">User logoff</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:20%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.200</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-12 08:51:22</td><td><span class="etype-badge">LOGON</span></td><td class="desc-cell">Interactive logon</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:13%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.130</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-12 09:00:11</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read document</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:9%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.090</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-12 09:34:07</td><td><span class="etype-badge">PROCESS_EXEC</span></td><td class="desc-cell">Launched Teams</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:15%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.150</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-12 10:02:48</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read shared folder</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:10%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.100</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-12 10:28:15</td><td><span class="etype-badge">FILE_WRITE</span></td><td class="desc-cell">Created document</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:13%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.130</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-12 11:15:40</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read contract</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:11%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.110</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-12 11:47:03</td><td><span class="etype-badge">FILE_WRITE</span></td><td class="desc-cell">Edited file</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:14%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.140</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-12 12:30:00</td><td><span class="etype-badge">LOGOFF</span></td><td class="desc-cell">User logoff</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:17%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.170</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-12 13:15:19</td><td><span class="etype-badge">LOGON</span></td><td class="desc-cell">Interactive logon</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:13%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.130</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-12 13:40:22</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read spreadsheet</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:10%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.100</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-12 14:05:11</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read document</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:11%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.110</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-12 15:00:38</td><td><span class="etype-badge">FILE_WRITE</span></td><td class="desc-cell">Saved file</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:13%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.130</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-12 16:00:00</td><td><span class="etype-badge">LOGOFF</span></td><td class="desc-cell">User logoff</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:18%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.180</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-13 09:02:17</td><td><span class="etype-badge">LOGON</span></td><td class="desc-cell">Interactive logon</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:13%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.130</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-13 09:18:44</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read document</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:9%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.090</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-13 10:11:26</td><td><span class="etype-badge">PROCESS_EXEC</span></td><td class="desc-cell">Launched Excel</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:16%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.160</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-13 10:45:52</td><td><span class="etype-badge">FILE_WRITE</span></td><td class="desc-cell">Saved spreadsheet</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:13%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.130</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-13 11:30:09</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read finance file</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:11%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.110</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-13 12:00:00</td><td><span class="etype-badge">LOGOFF</span></td><td class="desc-cell">User logoff</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:17%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.170</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-13 13:05:44</td><td><span class="etype-badge">LOGON</span></td><td class="desc-cell">Interactive logon</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:14%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.140</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-13 13:22:17</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read document</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:9%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.090</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-13 14:01:33</td><td><span class="etype-badge">FILE_WRITE</span></td><td class="desc-cell">Edited spreadsheet</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:13%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.130</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-13 15:10:48</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read HR file</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:11%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.110</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-13 16:30:00</td><td><span class="etype-badge">LOGOFF</span></td><td class="desc-cell">User logoff</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:18%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.180</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-high" data-flagged="true"><td class="ts-cell mono">2024-03-14 03:11:07</td><td><span class="etype-badge">LOGON</span></td><td class="desc-cell">Interactive logon</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:84%;background:#EF4444"></div></div><span class="score-num" style="color:#EF4444">0.840</span></div></td><td class="notes-cell">Unusual hour (3:00; typical 9–16h); Gap of 38,107s before event (median 652s)</td></tr>
+<tr class="row-critical" data-flagged="true"><td class="ts-cell mono">2024-03-14 03:11:38</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell" title="Accessed Finance share — \\FILESERVER01\Finance">Accessed Finance share</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:91%;background:#EF4444"></div></div><span class="score-num" style="color:#EF4444">0.910</span></div></td><td class="notes-cell">Unusual hour (3:00; typical 9–16h); Burst: 5 events in 60s window (90th-pct: 2)</td></tr>
+<tr class="row-critical" data-flagged="true"><td class="ts-cell mono">2024-03-14 03:11:52</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell" title="Read payroll file — \\FILESERVER01\Finance\payroll_2024.xlsx">Read payroll file</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:94%;background:#EF4444"></div></div><span class="score-num" style="color:#EF4444">0.940</span></div></td><td class="notes-cell">Unusual hour (3:00; typical 9–16h); Burst: 6 events in 60s window (90th-pct: 2)</td></tr>
+<tr class="row-critical" data-flagged="true"><td class="ts-cell mono">2024-03-14 03:12:04</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell" title="Read Q1 actuals — \\FILESERVER01\Finance\Q1_actuals.xlsx">Read Q1 actuals</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:93%;background:#EF4444"></div></div><span class="score-num" style="color:#EF4444">0.930</span></div></td><td class="notes-cell">Unusual hour (3:00; typical 9–16h); Burst: 7 events in 60s window (90th-pct: 2)</td></tr>
+<tr class="row-critical" data-flagged="true"><td class="ts-cell mono">2024-03-14 03:12:16</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell" title="Read contracts — \\FILESERVER01\Finance\contracts.pdf">Read contracts</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:91%;background:#EF4444"></div></div><span class="score-num" style="color:#EF4444">0.910</span></div></td><td class="notes-cell">Unusual hour (3:00; typical 9–16h); Burst: 7 events in 60s window (90th-pct: 2)</td></tr>
+<tr class="row-critical" data-flagged="true"><td class="ts-cell mono">2024-03-14 03:12:28</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell" title="Read vendor list — \\FILESERVER01\Finance\vendor_list.xlsx">Read vendor list</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:88%;background:#EF4444"></div></div><span class="score-num" style="color:#EF4444">0.880</span></div></td><td class="notes-cell">Unusual hour (3:00; typical 9–16h); Burst: 7 events in 60s window (90th-pct: 2)</td></tr>
+<tr class="row-critical" data-flagged="true"><td class="ts-cell mono">2024-03-14 03:12:41</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell" title="Read headcount projection — \\FILESERVER01\Finance\headcount_projection.xlsx">Read headcount projection</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:87%;background:#EF4444"></div></div><span class="score-num" style="color:#EF4444">0.870</span></div></td><td class="notes-cell">Unusual hour (3:00; typical 9–16h); Burst: 7 events in 60s window (90th-pct: 2)</td></tr>
+<tr class="row-critical" data-flagged="true"><td class="ts-cell mono">2024-03-14 03:12:55</td><td><span class="etype-badge">FILE_WRITE</span></td><td class="desc-cell" title="Created archive — C:\Users\jsmith\AppData\Local\Temp\fin_data.zip">Created archive</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:95%;background:#EF4444"></div></div><span class="score-num" style="color:#EF4444">0.950</span></div></td><td class="notes-cell">Unusual hour (3:00; typical 9–16h); Burst: 8 events in 60s window (90th-pct: 2); Rare event type (9.7% of timeline)</td></tr>
+<tr class="row-critical" data-flagged="true"><td class="ts-cell mono">2024-03-14 03:13:10</td><td><span class="etype-badge">USB_WRITE</span></td><td class="desc-cell" title="Copied to USB device — E:\fin_data.zip">Copied to USB device</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:97%;background:#EF4444"></div></div><span class="score-num" style="color:#EF4444">0.970</span></div></td><td class="notes-cell">Unusual hour (3:00; typical 9–16h); Rare event type (1.4% of timeline); Burst: 8 events in 60s window (90th-pct: 2)</td></tr>
+<tr class="row-high" data-flagged="true"><td class="ts-cell mono">2024-03-14 03:14:02</td><td><span class="etype-badge">LOGOFF</span></td><td class="desc-cell">User logoff</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:82%;background:#EF4444"></div></div><span class="score-num" style="color:#EF4444">0.820</span></div></td><td class="notes-cell">Unusual hour (3:00; typical 9–16h)</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-14 09:05:33</td><td><span class="etype-badge">LOGON</span></td><td class="desc-cell">Interactive logon</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:15%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.150</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-14 09:22:18</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read document</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:10%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.100</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-14 10:00:44</td><td><span class="etype-badge">PROCESS_EXEC</span></td><td class="desc-cell">Launched Teams</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:16%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.160</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-14 10:45:29</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read file</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:10%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.100</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-14 11:30:17</td><td><span class="etype-badge">FILE_WRITE</span></td><td class="desc-cell">Saved document</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:13%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.130</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-14 12:00:00</td><td><span class="etype-badge">LOGOFF</span></td><td class="desc-cell">User logoff</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:19%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.190</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-high" data-flagged="true"><td class="ts-cell mono">2024-03-14 22:47:03</td><td><span class="etype-badge">LOGON</span></td><td class="desc-cell">Interactive logon</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:75%;background:#F97316"></div></div><span class="score-num" style="color:#F97316">0.750</span></div></td><td class="notes-cell">Unusual hour (22:00; typical 9–16h); Gap of 38,223s before event (median 652s)</td></tr>
+<tr class="row-critical" data-flagged="true"><td class="ts-cell mono">2024-03-14 22:47:41</td><td><span class="etype-badge">REGISTRY_WRITE</span></td><td class="desc-cell" title="Modified registry run key — HKCU\Software\Microsoft\Windows\CurrentVersion\Run">Modified registry run key</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:89%;background:#EF4444"></div></div><span class="score-num" style="color:#EF4444">0.890</span></div></td><td class="notes-cell">Rare event type (1.4% of timeline); Unusual hour (22:00; typical 9–16h); Atypical hour for this event type (+3.1σ)</td></tr>
+<tr class="row-high" data-flagged="true"><td class="ts-cell mono">2024-03-14 22:48:05</td><td><span class="etype-badge">PROCESS_EXEC</span></td><td class="desc-cell" title="Launched unknown process — C:\Users\jsmith\AppData\Roaming\svchost32.exe">Launched unknown process</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:82%;background:#EF4444"></div></div><span class="score-num" style="color:#EF4444">0.820</span></div></td><td class="notes-cell">Unusual hour (22:00; typical 9–16h); Atypical hour for this event type (+2.8σ)</td></tr>
+<tr class="row-critical" data-flagged="true"><td class="ts-cell mono">2024-03-14 22:48:29</td><td><span class="etype-badge">NETWORK_CONN</span></td><td class="desc-cell" title="Outbound connection established — 185.220.101.47:443">Outbound connection established</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:91%;background:#EF4444"></div></div><span class="score-num" style="color:#EF4444">0.910</span></div></td><td class="notes-cell">Rare event type (1.4% of timeline); Unusual hour (22:00; typical 9–16h); Atypical hour for this event type (+3.2σ)</td></tr>
+<tr class="row-flagged" data-flagged="true"><td class="ts-cell mono">2024-03-14 22:50:14</td><td><span class="etype-badge">LOGOFF</span></td><td class="desc-cell">User logoff</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:73%;background:#F97316"></div></div><span class="score-num" style="color:#F97316">0.730</span></div></td><td class="notes-cell">Unusual hour (22:00; typical 9–16h)</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-15 09:03:22</td><td><span class="etype-badge">LOGON</span></td><td class="desc-cell">Interactive logon</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:15%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.150</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-15 09:15:48</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read document</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:9%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.090</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-15 10:02:37</td><td><span class="etype-badge">PROCESS_EXEC</span></td><td class="desc-cell">Launched Excel</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:16%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.160</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-15 10:30:11</td><td><span class="etype-badge">FILE_ACCESS</span></td><td class="desc-cell">Read spreadsheet</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:11%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.110</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-15 11:15:04</td><td><span class="etype-badge">FILE_WRITE</span></td><td class="desc-cell">Saved file</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:14%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.140</span></div></td><td class="notes-empty">—</td></tr>
+<tr class="row-normal" data-flagged="false"><td class="ts-cell mono">2024-03-15 12:00:00</td><td><span class="etype-badge">LOGOFF</span></td><td class="desc-cell">User logoff</td><td>jsmith</td><td>WORKSTATION01</td><td class="score-cell"><div class="score-bar-wrap"><div class="score-track"><div class="score-fill" style="width:20%;background:#7C3AED"></div></div><span class="score-num" style="color:#7C3AED">0.200</span></div></td><td class="notes-empty">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+
+<footer class="page-footer">
+  <span class="footer-brand">thegr8val · Timeline Anomaly Highlighter</span>
+  <span class="footer-meta">Generated 2026-06-10 12:00 UTC · IsolationForest + LOF · scikit-learn</span>
+</footer>
+
+<script>
+(function(){var flaggedOnly=false;var rows=[];function init(){rows=Array.from(document.querySelectorAll('tr[data-flagged]'));updateCount()}window.toggleFilter=function(){flaggedOnly=!flaggedOnly;var btn=document.getElementById('filter-btn');if(flaggedOnly){btn.textContent='Show All Events';btn.classList.add('active');rows.forEach(function(r){r.style.display=r.dataset.flagged==='true'?'':'none'})}else{btn.textContent='Flagged Only';btn.classList.remove('active');rows.forEach(function(r){r.style.display=''})}updateCount()};function updateCount(){var visible=flaggedOnly?rows.filter(function(r){return r.dataset.flagged==='true'}).length:rows.length;var el=document.getElementById('row-count');if(el)el.textContent='Showing '+visible+' of '+rows.length+' events'}document.addEventListener('DOMContentLoaded',init)})();
+</script>
+</body>
+</html>
