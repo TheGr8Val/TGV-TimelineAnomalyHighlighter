@@ -1,0 +1,73 @@
+timestamp,event_type,description,user,host,filename
+2024-03-11 08:47:12,LOGON,Interactive logon,jsmith,WORKSTATION01,
+2024-03-11 08:48:05,FILE_ACCESS,Opened email attachment,jsmith,WORKSTATION01,C:\Users\jsmith\Downloads\Q1_forecast.xlsx
+2024-03-11 08:52:33,FILE_ACCESS,Read document,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\project_plan.docx
+2024-03-11 09:05:44,PROCESS_EXEC,Launched browser,jsmith,WORKSTATION01,C:\Program Files\Google\Chrome\chrome.exe
+2024-03-11 09:18:21,FILE_ACCESS,Read spreadsheet,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\budget.xlsx
+2024-03-11 09:31:07,FILE_WRITE,Saved document,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\budget_v2.xlsx
+2024-03-11 10:02:55,FILE_ACCESS,Read document,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\org_chart.pptx
+2024-03-11 10:24:40,PROCESS_EXEC,Launched Word,jsmith,WORKSTATION01,C:\Program Files\Microsoft Office\WINWORD.EXE
+2024-03-11 10:45:12,FILE_WRITE,Saved report,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\report_draft.docx
+2024-03-11 11:03:28,FILE_ACCESS,Opened shared folder,jsmith,WORKSTATION01,\\FILESERVER01\Finance
+2024-03-11 11:09:44,FILE_ACCESS,Read file,jsmith,WORKSTATION01,\\FILESERVER01\Finance\Q1_actuals.xlsx
+2024-03-11 11:22:01,FILE_ACCESS,Read file,jsmith,WORKSTATION01,\\FILESERVER01\Finance\payroll_2024.xlsx
+2024-03-11 12:00:15,LOGOFF,User logoff,jsmith,WORKSTATION01,
+2024-03-11 13:01:08,LOGON,Interactive logon,jsmith,WORKSTATION01,
+2024-03-11 13:15:32,FILE_ACCESS,Read email,jsmith,WORKSTATION01,
+2024-03-11 13:28:47,FILE_WRITE,Edited document,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\meeting_notes.docx
+2024-03-11 14:05:19,PROCESS_EXEC,Launched Excel,jsmith,WORKSTATION01,C:\Program Files\Microsoft Office\EXCEL.EXE
+2024-03-11 14:22:55,FILE_ACCESS,Opened spreadsheet,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\forecast.xlsx
+2024-03-11 15:01:33,FILE_WRITE,Saved spreadsheet,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\forecast_final.xlsx
+2024-03-11 15:45:08,FILE_ACCESS,Read shared file,jsmith,WORKSTATION01,\\FILESERVER01\HR\headcount.xlsx
+2024-03-11 16:30:00,LOGOFF,User logoff,jsmith,WORKSTATION01,
+2024-03-12 08:51:22,LOGON,Interactive logon,jsmith,WORKSTATION01,
+2024-03-12 09:00:11,FILE_ACCESS,Read document,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\agenda.docx
+2024-03-12 09:34:07,PROCESS_EXEC,Launched Teams,jsmith,WORKSTATION01,C:\Program Files\Microsoft\Teams\current\Teams.exe
+2024-03-12 10:02:48,FILE_ACCESS,Read shared folder,jsmith,WORKSTATION01,\\FILESERVER01\Projects
+2024-03-12 10:28:15,FILE_WRITE,Created document,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\proposal_draft.docx
+2024-03-12 11:15:40,FILE_ACCESS,Read file,jsmith,WORKSTATION01,\\FILESERVER01\Finance\contracts.pdf
+2024-03-12 11:47:03,FILE_WRITE,Edited file,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\proposal_draft.docx
+2024-03-12 12:30:00,LOGOFF,User logoff,jsmith,WORKSTATION01,
+2024-03-12 13:15:19,LOGON,Interactive logon,jsmith,WORKSTATION01,
+2024-03-12 13:40:22,FILE_ACCESS,Read spreadsheet,jsmith,WORKSTATION01,\\FILESERVER01\Finance\vendor_list.xlsx
+2024-03-12 14:05:11,FILE_ACCESS,Read document,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\contracts_summary.docx
+2024-03-12 15:00:38,FILE_WRITE,Saved file,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\proposal_final.docx
+2024-03-12 16:00:00,LOGOFF,User logoff,jsmith,WORKSTATION01,
+2024-03-13 09:02:17,LOGON,Interactive logon,jsmith,WORKSTATION01,
+2024-03-13 09:18:44,FILE_ACCESS,Read document,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\project_plan.docx
+2024-03-13 10:11:26,PROCESS_EXEC,Launched Excel,jsmith,WORKSTATION01,C:\Program Files\Microsoft Office\EXCEL.EXE
+2024-03-13 10:45:52,FILE_WRITE,Saved spreadsheet,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\analysis.xlsx
+2024-03-13 11:30:09,FILE_ACCESS,Read file,jsmith,WORKSTATION01,\\FILESERVER01\Finance\Q1_actuals.xlsx
+2024-03-13 12:00:00,LOGOFF,User logoff,jsmith,WORKSTATION01,
+2024-03-13 13:05:44,LOGON,Interactive logon,jsmith,WORKSTATION01,
+2024-03-13 13:22:17,FILE_ACCESS,Read document,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\agenda.docx
+2024-03-13 14:01:33,FILE_WRITE,Edited spreadsheet,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\analysis.xlsx
+2024-03-13 15:10:48,FILE_ACCESS,Read HR file,jsmith,WORKSTATION01,\\FILESERVER01\HR\comp_bands.xlsx
+2024-03-13 16:30:00,LOGOFF,User logoff,jsmith,WORKSTATION01,
+2024-03-14 03:11:07,LOGON,Interactive logon,jsmith,WORKSTATION01,
+2024-03-14 03:11:38,FILE_ACCESS,Accessed Finance share,jsmith,WORKSTATION01,\\FILESERVER01\Finance
+2024-03-14 03:11:52,FILE_ACCESS,Read file,jsmith,WORKSTATION01,\\FILESERVER01\Finance\payroll_2024.xlsx
+2024-03-14 03:12:04,FILE_ACCESS,Read file,jsmith,WORKSTATION01,\\FILESERVER01\Finance\Q1_actuals.xlsx
+2024-03-14 03:12:16,FILE_ACCESS,Read file,jsmith,WORKSTATION01,\\FILESERVER01\Finance\contracts.pdf
+2024-03-14 03:12:28,FILE_ACCESS,Read file,jsmith,WORKSTATION01,\\FILESERVER01\Finance\vendor_list.xlsx
+2024-03-14 03:12:41,FILE_ACCESS,Read file,jsmith,WORKSTATION01,\\FILESERVER01\Finance\headcount_projection.xlsx
+2024-03-14 03:12:55,FILE_WRITE,Created archive,jsmith,WORKSTATION01,C:\Users\jsmith\AppData\Local\Temp\fin_data.zip
+2024-03-14 03:13:10,USB_WRITE,Copied to USB device,jsmith,WORKSTATION01,E:\fin_data.zip
+2024-03-14 03:14:02,LOGOFF,User logoff,jsmith,WORKSTATION01,
+2024-03-14 09:05:33,LOGON,Interactive logon,jsmith,WORKSTATION01,
+2024-03-14 09:22:18,FILE_ACCESS,Read document,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\agenda.docx
+2024-03-14 10:00:44,PROCESS_EXEC,Launched Teams,jsmith,WORKSTATION01,C:\Program Files\Microsoft\Teams\current\Teams.exe
+2024-03-14 10:45:29,FILE_ACCESS,Read file,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\project_plan.docx
+2024-03-14 11:30:17,FILE_WRITE,Saved document,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\status_update.docx
+2024-03-14 12:00:00,LOGOFF,User logoff,jsmith,WORKSTATION01,
+2024-03-14 22:47:03,LOGON,Interactive logon,jsmith,WORKSTATION01,
+2024-03-14 22:47:41,REGISTRY_WRITE,Modified registry run key,jsmith,WORKSTATION01,HKCU\Software\Microsoft\Windows\CurrentVersion\Run
+2024-03-14 22:48:05,PROCESS_EXEC,Launched unknown process,jsmith,WORKSTATION01,C:\Users\jsmith\AppData\Roaming\svchost32.exe
+2024-03-14 22:48:29,NETWORK_CONN,Outbound connection established,jsmith,WORKSTATION01,185.220.101.47:443
+2024-03-14 22:50:14,LOGOFF,User logoff,jsmith,WORKSTATION01,
+2024-03-15 09:03:22,LOGON,Interactive logon,jsmith,WORKSTATION01,
+2024-03-15 09:15:48,FILE_ACCESS,Read document,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\status_update.docx
+2024-03-15 10:02:37,PROCESS_EXEC,Launched Excel,jsmith,WORKSTATION01,C:\Program Files\Microsoft Office\EXCEL.EXE
+2024-03-15 10:30:11,FILE_ACCESS,Read spreadsheet,jsmith,WORKSTATION01,\\FILESERVER01\Finance\Q1_actuals.xlsx
+2024-03-15 11:15:04,FILE_WRITE,Saved file,jsmith,WORKSTATION01,C:\Users\jsmith\Documents\final_report.docx
+2024-03-15 12:00:00,LOGOFF,User logoff,jsmith,WORKSTATION01,
