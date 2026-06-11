@@ -1,5 +1,7 @@
 # TGV Timeline Anomaly Highlighter
 
+[![CI](https://github.com/TheGr8Val/TGV-TimelineAnomalyHighlighter/actions/workflows/ci.yml/badge.svg)](https://github.com/TheGr8Val/TGV-TimelineAnomalyHighlighter/actions/workflows/ci.yml)
+
 **ML-powered anomaly detection for DFIR timelines.**
 
 Ingest a DFIR timeline CSV → get back every event scored for statistical anomaly, with plain-English explainability notes for each flagged event.
